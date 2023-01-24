@@ -14,6 +14,4 @@ To recap, City Explorer takes a location from the user to display map data, weat
 
 ## Links and Resources
 
-### Expo Snack
-<div data-snack-id="@git/github.com/kennywlino/city-explorer-react-native" data-snack-platform="web" data-snack-preview="true" data-snack-theme="dark" style="overflow:hidden;background:#212121;border:1px solid var(--color-border);border-radius:4px;height:505px;width:100%"></div>
-<script async src="https://snack.expo.dev/embed.js"></script>
+- [Expo Snack Link](https://snack.expo.dev/@kennywlino/github.com-kennywlino-city-explorer-react-native)
