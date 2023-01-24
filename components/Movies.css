@@ -1,0 +1,7 @@
+div.carousel {
+    max-width: 400px;
+}
+
+div.carousel-caption {
+    background-color: #00000080;
+}

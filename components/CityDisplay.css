@@ -1,0 +1,5 @@
+div.card div.card-header {
+    display: flex;
+    justify-content: center;
+    font-size: 120%;
+}

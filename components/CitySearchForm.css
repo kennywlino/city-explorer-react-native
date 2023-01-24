@@ -1,0 +1,12 @@
+form label {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    color: white;
+}
+
+div.info-cards {
+    display: flex;
+    align-items: center;
+    gap: 2em;
+}
