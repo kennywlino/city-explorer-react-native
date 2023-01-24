@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Image, Keyboard, Pressable, SafeAreaView, StyleSheet, Text, TextInput, TouchableWithoutFeedback} from 'react-native';
 import * as Location from 'expo-location';
+import { LOCATIONIQ_API_KEY } from '@env';
 
 const CitySearchForm = () => {
     const [city, setCity] = useState('');
@@ -13,6 +14,10 @@ const CitySearchForm = () => {
     const [errorMessage, setErrorMessage] = useState('no error');
     const [showError, setShowError] = useState(false);
 
+    // runs when coordinates is updated
+    useEffect(() => {
+        getMapImage();
+    }, [coordinates]);
    
     const handleError = (error) => {
         setError(true);
@@ -20,8 +25,25 @@ const CitySearchForm = () => {
         setShowError(true); 
     }
 
+    // uses Expo to get device location
+    const getCurrentLocation = async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
 
-    // needs city
+        if (status !== 'granted') {
+            setError(true);
+            setErrorMessage('ERROR: Location access was denied.');
+            setShowError(true);
+            return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({});
+        setCoordinates({
+            'lat' : location.coords.latitude,
+            'lon' : location.coords.longitude
+        });
+    }
+
+    // search by city name
     const getCityData = async () => {
         try {
             // let cityDataUrl = `https://us1.locationiq.com/v1/search?key=${process.env.LOCATIONIQ_API_KEY}&q=${city}&format=json`;
@@ -44,8 +66,9 @@ const CitySearchForm = () => {
     //  needs lat and lon
     // can get from city data or location request
     const getMapImage = async () => {
-        // let mapImageUrl = `https://maps.locationiq.com/v3/staticmap?key=${process.env.LOCATIONIQ_API_KEY}&center=${lat},${lon}&zoom=14`;
-        let mapImageUrl = `https://maps.locationiq.com/v3/staticmap?key=pk.537dc1559d074f5b7907f63b7520fc13&center=47.6038321,-122.330062&zoom=14`;
+        console.log(process.env.LOCATIONIQ_API_KEY)
+        let mapImageUrl = `https://maps.locationiq.com/v3/staticmap?key=${process.env.LOCATIONIQ_API_KEY}&center=${coordinates.lat},${coordinates.lon}&zoom=14`;
+        // let mapImageUrl = `https://maps.locationiq.com/v3/staticmap?key=pk.537dc1559d074f5b7907f63b7520fc13&center=47.6038321,-122.330062&zoom=14`;
         let mapImage = await axios.get(mapImageUrl);
         setMapImage(mapImage.request.responseURL);  
     }
@@ -63,10 +86,6 @@ const CitySearchForm = () => {
         }
     }
 
-    const getUserLocation = () => {
-
-    }
-
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <SafeAreaView style={styles.container}>
@@ -77,10 +96,10 @@ const CitySearchForm = () => {
                 /> */}
                 <Pressable
                     style={styles.button}
-                    onPress={() => getMapData()}
+                    onPress={() => getCurrentLocation()}
                     >
                 <Text style={styles.text}>Use Current Location</Text>
-                </Pressable> 
+                </Pressable>
                 {/* <Pressable
                     style={styles.button}
                     onPress={() => getMapData()}
@@ -107,9 +126,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     color: 'white',
     height: 150,
+    width: 150,
     borderWidth: 2,
     padding: 10,
-    borderRadius: 50%,
+    borderRadius: '75%',
     backgroundColor: 'black',
    },
    input: {
