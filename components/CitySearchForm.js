@@ -8,6 +8,7 @@ const CitySearchForm = () => {
     const [city, setCity] = useState('');
     const [coordinates, setCoordinates] = useState({});
     const [cityData, setCityData] = useState([]);
+    const [displayName, setDisplayName] = useState('');
     const [mapImage, setMapImage] = useState('');
     const [forecastData, setForecastData] = useState([]);
     const [error, setError] = useState(false);
@@ -17,6 +18,7 @@ const CitySearchForm = () => {
     // runs when coordinates is updated
     useEffect(() => {
         getMapImage();
+        getCityDataByCoordinates();
     }, [coordinates]);
    
     const handleError = (error) => {
@@ -43,8 +45,9 @@ const CitySearchForm = () => {
         });
     }
 
-    // search by city name
-    const getCityData = async () => {
+    // search by city name, state, etc. 
+    // AKA Forward Geocoding in LocationIQ
+    const getCityDataByString = async () => {
         try {
             // let cityDataUrl = `https://us1.locationiq.com/v1/search?key=${process.env.LOCATIONIQ_API_KEY}&q=${city}&format=json`;
             let cityDataUrl = 'https://us1.locationiq.com/v1/search?key=pk.537dc1559d074f5b7907f63b7520fc13&q=Seattle&format=json';
@@ -63,12 +66,24 @@ const CitySearchForm = () => {
         }
     }
 
+    // search by coordinates
+    const getCityDataByCoordinates = async () => {
+        try {
+            let cityDataUrl = `https://us1.locationiq.com/v1/reverse?key=${process.env.LOCATIONIQ_API_KEY}&lat=${coordinates.lat}&lon=${coordinates.lon}&format=json`
+            let cityData = await axios.get(cityDataUrl);
+            setDisplayName(cityData.data.display_name);
+            
+            setError(false);
+
+        } catch(error) {
+            handleError(error);
+        }
+    }
+
     //  needs lat and lon
     // can get from city data or location request
     const getMapImage = async () => {
-        console.log(process.env.LOCATIONIQ_API_KEY)
         let mapImageUrl = `https://maps.locationiq.com/v3/staticmap?key=${process.env.LOCATIONIQ_API_KEY}&center=${coordinates.lat},${coordinates.lon}&zoom=14`;
-        // let mapImageUrl = `https://maps.locationiq.com/v3/staticmap?key=pk.537dc1559d074f5b7907f63b7520fc13&center=47.6038321,-122.330062&zoom=14`;
         let mapImage = await axios.get(mapImageUrl);
         setMapImage(mapImage.request.responseURL);  
     }
@@ -94,6 +109,9 @@ const CitySearchForm = () => {
                 onChangeText={setCity}
                 placeholder="Location"
                 /> */}
+                <Text style={{ color: 'white', fontSize: '24'}}>
+                    {displayName}
+                </Text>
                 <Pressable
                     style={styles.button}
                     onPress={() => getCurrentLocation()}
@@ -146,7 +164,7 @@ const styles = StyleSheet.create({
     height: 300,
    },
    container: {
-    flex: 0,
+    flex: 1,
     backgroundColor: '#262AC0',
     alignItems: 'center',
     justifyContent: 'center',
