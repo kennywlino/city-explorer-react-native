@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Keyboard, Pressable, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback} from 'react-native';
+import { Center, Container } from 'native-base';
 import * as Location from 'expo-location';
 import { LOCATIONIQ_API_KEY } from '@env';
 
@@ -107,31 +108,22 @@ const CitySearchForm = () => {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <SafeAreaView style={styles.container}>
-                {/* <TextInput
-                style={styles.input}
-                onChangeText={setCity}
-                placeholder="Location"
-                /> */}
-                <Text style={{ color: 'white', fontSize: '24'}}>
-                    {displayName}
+            <Center>
+                <Container style={styles.container}>
+                    <LocationInput 
+                        getCurrentLocation={getCurrentLocation}
+                        />
+                <Text style={{ color: 'white', fontSize: '24', textAlign: 'center'}}>
+                        {displayName}
                 </Text>
-                <LocationInput 
-                    getCurrentLocation={getCurrentLocation}
-                />
-                {/* <Pressable
-                    style={styles.button}
-                    onPress={() => getMapData()}
-                    >
-                <Text style={styles.text}>Search</Text>
-                </Pressable> */}
-               <MapImage 
-                    mapImage={mapImage}
-               /> 
-                <Text>
-                    {errorMessage}
-                </Text>
-            </SafeAreaView>
+                <MapImage 
+                        mapImage={mapImage}
+                        /> 
+                    <Text>
+                        {errorMessage}
+                    </Text>
+                </Container>
+            </Center>
         </TouchableWithoutFeedback>
     )
 }
