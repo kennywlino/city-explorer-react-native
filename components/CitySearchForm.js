@@ -4,6 +4,8 @@ import { Image, Keyboard, Pressable, SafeAreaView, StyleSheet, Text, TextInput, 
 import * as Location from 'expo-location';
 import { LOCATIONIQ_API_KEY } from '@env';
 
+import MapImage from './MapImage';
+
 const CitySearchForm = () => {
     const [city, setCity] = useState('');
     const [coordinates, setCoordinates] = useState({});
@@ -124,12 +126,9 @@ const CitySearchForm = () => {
                     >
                 <Text style={styles.text}>Search</Text>
                 </Pressable> */}
-                {mapImage ? <Image
-                    style={styles.image}
-                    source={{
-                        uri: mapImage
-                    }}
-                    /> : ''}
+               <MapImage 
+                    mapImage={mapImage}
+               /> 
                 <Text>
                     {errorMessage}
                 </Text>
