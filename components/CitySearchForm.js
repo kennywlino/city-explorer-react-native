@@ -5,6 +5,7 @@ import * as Location from 'expo-location';
 import { LOCATIONIQ_API_KEY } from '@env';
 
 import MapImage from './MapImage';
+import LocationInput from './LocationInput';
 
 const CitySearchForm = () => {
     const [city, setCity] = useState('');
@@ -114,12 +115,7 @@ const CitySearchForm = () => {
                 <Text style={{ color: 'white', fontSize: '24'}}>
                     {displayName}
                 </Text>
-                <Pressable
-                    style={styles.button}
-                    onPress={() => getCurrentLocation()}
-                    >
-                <Text style={styles.text}>Use Current Location</Text>
-                </Pressable>
+                <LocationInput />
                 {/* <Pressable
                     style={styles.button}
                     onPress={() => getMapData()}
