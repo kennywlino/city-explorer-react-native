@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Image, Keyboard, Pressable, SafeAreaView, StyleSheet, Text, TextInput, TouchableWithoutFeedback} from 'react-native';
+import { Keyboard, Pressable, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback} from 'react-native';
+import { Center, Container } from 'native-base';
 import * as Location from 'expo-location';
 import { LOCATIONIQ_API_KEY } from '@env';
+
+import MapImage from './MapImage';
+import LocationInput from './LocationInput';
+import CityDisplay from './CityDisplay';
 
 const CitySearchForm = () => {
     const [city, setCity] = useState('');
     const [coordinates, setCoordinates] = useState({});
-    const [cityData, setCityData] = useState([]);
+    const [cityData, setCityData] = useState({});
     const [displayName, setDisplayName] = useState('');
     const [mapImage, setMapImage] = useState('');
     const [forecastData, setForecastData] = useState([]);
@@ -17,8 +22,8 @@ const CitySearchForm = () => {
 
     // runs when coordinates is updated
     useEffect(() => {
-        getMapImage();
         getCityDataByCoordinates();
+        getMapImage();
     }, [coordinates]);
    
     const handleError = (error) => {
@@ -69,8 +74,9 @@ const CitySearchForm = () => {
     // search by coordinates
     const getCityDataByCoordinates = async () => {
         try {
-            let cityDataUrl = `https://us1.locationiq.com/v1/reverse?key=${process.env.LOCATIONIQ_API_KEY}&lat=${coordinates.lat}&lon=${coordinates.lon}&format=json`
+            let cityDataUrl = `https://us1.locationiq.com/v1/reverse?key=${LOCATIONIQ_API_KEY}&lat=${coordinates.lat}&lon=${coordinates.lon}&format=json`
             let cityData = await axios.get(cityDataUrl);
+            setCityData(cityData.data);
             setDisplayName(cityData.data.display_name);
             
             setError(false);
@@ -103,37 +109,17 @@ const CitySearchForm = () => {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <SafeAreaView style={styles.container}>
-                {/* <TextInput
-                style={styles.input}
-                onChangeText={setCity}
-                placeholder="Location"
-                /> */}
-                <Text style={{ color: 'white', fontSize: '24'}}>
-                    {displayName}
-                </Text>
-                <Pressable
-                    style={styles.button}
-                    onPress={() => getCurrentLocation()}
-                    >
-                <Text style={styles.text}>Use Current Location</Text>
-                </Pressable>
-                {/* <Pressable
-                    style={styles.button}
-                    onPress={() => getMapData()}
-                    >
-                <Text style={styles.text}>Search</Text>
-                </Pressable> */}
-                {mapImage ? <Image
-                    style={styles.image}
-                    source={{
-                        uri: mapImage
-                    }}
-                    /> : ''}
-                <Text>
-                    {errorMessage}
-                </Text>
-            </SafeAreaView>
+            <Center>
+                <Container style={styles.container}>
+                    <LocationInput 
+                        getCurrentLocation={getCurrentLocation}
+                        />
+                <CityDisplay 
+                    mapImage={mapImage}
+                    cityData={cityData}
+                />
+                </Container>
+            </Center>
         </TouchableWithoutFeedback>
     )
 }
@@ -159,12 +145,8 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: 'white',
    },
-   image: {
-    width: 300,
-    height: 300,
-   },
    container: {
-    flex: 1,
+    flex: 0,
     backgroundColor: '#262AC0',
     alignItems: 'center',
     justifyContent: 'center',
