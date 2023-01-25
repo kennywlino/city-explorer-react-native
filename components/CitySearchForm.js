@@ -7,11 +7,12 @@ import { LOCATIONIQ_API_KEY } from '@env';
 
 import MapImage from './MapImage';
 import LocationInput from './LocationInput';
+import CityDisplay from './CityDisplay';
 
 const CitySearchForm = () => {
     const [city, setCity] = useState('');
     const [coordinates, setCoordinates] = useState({});
-    const [cityData, setCityData] = useState([]);
+    const [cityData, setCityData] = useState({});
     const [displayName, setDisplayName] = useState('');
     const [mapImage, setMapImage] = useState('');
     const [forecastData, setForecastData] = useState([]);
@@ -21,8 +22,8 @@ const CitySearchForm = () => {
 
     // runs when coordinates is updated
     useEffect(() => {
-        getMapImage();
         getCityDataByCoordinates();
+        getMapImage();
     }, [coordinates]);
    
     const handleError = (error) => {
@@ -33,7 +34,6 @@ const CitySearchForm = () => {
 
     // uses Expo to get device location
     const getCurrentLocation = async () => {
-        console.log('get current location');
         let { status } = await Location.requestForegroundPermissionsAsync();
 
         if (status !== 'granted') {
@@ -76,6 +76,7 @@ const CitySearchForm = () => {
         try {
             let cityDataUrl = `https://us1.locationiq.com/v1/reverse?key=${LOCATIONIQ_API_KEY}&lat=${coordinates.lat}&lon=${coordinates.lon}&format=json`
             let cityData = await axios.get(cityDataUrl);
+            setCityData(cityData.data);
             setDisplayName(cityData.data.display_name);
             
             setError(false);
@@ -113,15 +114,10 @@ const CitySearchForm = () => {
                     <LocationInput 
                         getCurrentLocation={getCurrentLocation}
                         />
-                <Text style={{ color: 'white', fontSize: '24', textAlign: 'center'}}>
-                        {displayName}
-                </Text>
-                <MapImage 
-                        mapImage={mapImage}
-                        /> 
-                    <Text>
-                        {errorMessage}
-                    </Text>
+                <CityDisplay 
+                    mapImage={mapImage}
+                    cityData={cityData}
+                />
                 </Container>
             </Center>
         </TouchableWithoutFeedback>
