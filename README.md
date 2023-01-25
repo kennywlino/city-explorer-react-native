@@ -17,3 +17,12 @@ In order to build upon the features and the UI, we also use the Native Base comp
 ## Links and Resources
 
 - [Expo Snack Link](https://snack.expo.dev/@kennywlino/github.com-kennywlino-city-explorer-react-native)
+
+## Example Screenshots
+
+![On Load](./assets/IMG_3907.jpeg)
+![Single search](./assets/IMG_3904.jpeg)
+
+## UML
+
+![App / API Interaction](./assets/class-06.png)
