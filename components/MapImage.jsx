@@ -1,3 +1,5 @@
+import { Image, StyleSheet } from "react-native";
+
 const MapImage = (props) => {
   return (
     <>
@@ -12,5 +14,12 @@ const MapImage = (props) => {
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  image: {
+   width: 300,
+   height: 300,
+  },
+});
 
 export default MapImage;

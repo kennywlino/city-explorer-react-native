@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Image, Keyboard, Pressable, SafeAreaView, StyleSheet, Text, TextInput, TouchableWithoutFeedback} from 'react-native';
+import { Keyboard, Pressable, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback} from 'react-native';
 import * as Location from 'expo-location';
 import { LOCATIONIQ_API_KEY } from '@env';
 
@@ -32,6 +32,7 @@ const CitySearchForm = () => {
 
     // uses Expo to get device location
     const getCurrentLocation = async () => {
+        console.log('get current location');
         let { status } = await Location.requestForegroundPermissionsAsync();
 
         if (status !== 'granted') {
@@ -72,7 +73,7 @@ const CitySearchForm = () => {
     // search by coordinates
     const getCityDataByCoordinates = async () => {
         try {
-            let cityDataUrl = `https://us1.locationiq.com/v1/reverse?key=${process.env.LOCATIONIQ_API_KEY}&lat=${coordinates.lat}&lon=${coordinates.lon}&format=json`
+            let cityDataUrl = `https://us1.locationiq.com/v1/reverse?key=${LOCATIONIQ_API_KEY}&lat=${coordinates.lat}&lon=${coordinates.lon}&format=json`
             let cityData = await axios.get(cityDataUrl);
             setDisplayName(cityData.data.display_name);
             
@@ -115,7 +116,9 @@ const CitySearchForm = () => {
                 <Text style={{ color: 'white', fontSize: '24'}}>
                     {displayName}
                 </Text>
-                <LocationInput />
+                <LocationInput 
+                    getCurrentLocation={getCurrentLocation}
+                />
                 {/* <Pressable
                     style={styles.button}
                     onPress={() => getMapData()}
@@ -154,12 +157,8 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: 'white',
    },
-   image: {
-    width: 300,
-    height: 300,
-   },
    container: {
-    flex: 1,
+    flex: 0,
     backgroundColor: '#262AC0',
     alignItems: 'center',
     justifyContent: 'center',
